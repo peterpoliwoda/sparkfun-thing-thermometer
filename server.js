@@ -2,14 +2,13 @@
 
 const http = require('http'),
     fs = require('fs'),
+    config = require('./config.json'),
     request = require('request'),
     pathUtils = require('path'),
     express = require('express'),
     app = express(),
     PORT = process.env.PORT || 5000,
-    appDir = pathUtils.resolve(__dirname, 'client'),
-    WEATHER_API_TOKEN = '1302b3086334e86e44b976a717d3c2ff',
-    WEATHER_LAT_LONG = '53.375369,-6.332644';
+    appDir = pathUtils.resolve(__dirname, 'client');
 let tempFilePath = getTodaysFileName();
 let stashedTempOutside = null;
 
@@ -28,7 +27,7 @@ function getTempOutside() {
 
 function getTempFromAPI() {
     const weatherPath = 'https://api.darksky.net/forecast/' +
-        WEATHER_API_TOKEN + '/' + WEATHER_LAT_LONG + '?units=si&exclude=flags,hourly,minutely,daily';
+        config.WEATHER_API_TOKEN + '/' + config.WEATHER_LAT_LONG + '?units=si&exclude=flags,hourly,minutely,daily';
     request(weatherPath, {json: true}, (error, response, body) => {
         let currentTemp = body && body.currently && body.currently.temperature ?
             body.currently.temperature : null;

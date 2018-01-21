@@ -7,3 +7,12 @@ Have fun measuring your living room temperature.
 
 Screenshot:
 ![screenshot](https://user-images.githubusercontent.com/1800333/35198380-0647730c-fee6-11e7-9916-b9ae409c9031.png)
+
+
+Sample config.json
+```
+{
+    "WEATHER_API_TOKEN": "YOUR_API_TOKEN",
+    "WEATHER_LAT_LONG": "YOUR_LAT,YOUR_LONG"
+}
+```

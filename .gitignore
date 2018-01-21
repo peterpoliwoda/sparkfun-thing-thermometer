@@ -5,3 +5,4 @@ package-lock.json
 
 temperature/*
 tempFile.txt
+config.json
