@@ -6,4 +6,4 @@ IoT Thermometer running on an Sparkfun Thing ESP32 Arduino talking to a Raspberr
 Have fun measuring your living room temperature.
 
 Screenshot:
-![screenshot](https://user-images.githubusercontent.com/1800333/35198311-be8c697e-fee4-11e7-939b-7ce3b2bc1dfa.png)
+![screenshot](https://user-images.githubusercontent.com/1800333/35198380-0647730c-fee6-11e7-9916-b9ae409c9031.png)
