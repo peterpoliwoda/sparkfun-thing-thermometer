@@ -2,28 +2,53 @@
 
 const http = require('http'),
     fs = require('fs'),
+    request = require('request'),
     pathUtils = require('path'),
     express = require('express'),
     app = express(),
     PORT = process.env.PORT || 5000,
-    appDir = pathUtils.resolve(__dirname, 'client');
+    appDir = pathUtils.resolve(__dirname, 'client'),
+    WEATHER_API_TOKEN = '1302b3086334e86e44b976a717d3c2ff',
+    WEATHER_LAT_LONG = '53.375369,-6.332644';
 let tempFilePath = getTodaysFileName();
+let stashedTempOutside = null;
 
 function getTodaysFileName() {
     let fileName = 'temperature/' + new Date().toISOString().split('T')[0] + '.txt';
     return fileName;
 }
 
+function getTempOutside() {
+    if (!stashedTempOutside || new Date().getMinutes() === 59) {
+        return getTempFromAPI();
+    } else {
+        return stashedTempOutside;
+    }
+}
+
+function getTempFromAPI() {
+    const weatherPath = 'https://api.darksky.net/forecast/' +
+        WEATHER_API_TOKEN + '/' + WEATHER_LAT_LONG + '?units=si&exclude=flags,hourly,minutely,daily';
+    request(weatherPath, {json: true}, (error, response, body) => {
+        let currentTemp = body && body.currently && body.currently.temperature ?
+            body.currently.temperature : null;
+        console.log('currentTemp from API is:', currentTemp);
+        stashedTempOutside = currentTemp;
+        return currentTemp;
+    });
+}
+
 app.use(express.static(appDir));
 
 app.post('/temperature/:temp', function(req, res) {
+    let outside = getTempOutside();
     let temperatura = req.params.temp;
     if (temperatura && !isNaN(temperatura)) {
         let now = new Date().toISOString();
-        let dataLine = now + ' ' + temperatura + '\n';
+        let dataLine = now + ' ' + temperatura + ' ' + outside + '\n';
         fs.appendFile(tempFilePath, dataLine, (err) => {
             if (err) throw err;
-            console.log(now + ': Temperature ' + temperatura  + ' recorded.');
+            console.log(now + ': Temperature ' + temperatura  + ' recorded. ' + 'Outside: ' + outside);
             res.status(200).json({status: 'OK', message: 'Saved temp ' + temperatura + ' to file at ' + now});
         });
     } else {
@@ -64,4 +89,5 @@ app.get('/', function(req, res) {
 http.createServer(app).listen(PORT, function() {
     console.log('Thermometer server listening on port ' + PORT);
     console.log('http://localhost:' + PORT);
+    getTempOutside();
 });

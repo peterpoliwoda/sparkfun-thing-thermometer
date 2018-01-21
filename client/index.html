@@ -11,6 +11,7 @@
         
     var labels = [];
     var tempData = [];
+    var outsideData = [];
 
     $.get('/temperature', function(data) {
         var lines = data.split('\n');
@@ -18,10 +19,11 @@
             if (line.length && !~line.indexOf('-127')) {
                 labels.push(line.split(' ')[0]);
                 tempData.push(line.split(' ')[1]);
+                outsideData.push(line.split(' ')[2] || 0);
             }
         });
 
-        var ctx = document.getElementById("tempChart").getContext('2d');
+        var ctx = document.getElementById('tempChart').getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -29,6 +31,11 @@
                 datasets: [{ 
                     data: tempData,
                     label: 'Room temperature',
+                    borderColor: '#4bc0c0',
+                    fill: false
+                },{ 
+                    data: outsideData,
+                    label: 'Outside temperature',
                     borderColor: '#3e95cd',
                     fill: false
                 }]
