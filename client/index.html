@@ -1,3 +1,52 @@
 <html>
-    Hello and welcome to the thermometer graph
+    <head>
+        <title>Peter's room temperature</title>
+    </head>
+    <body>
+    <canvas id="tempChart" width="800" height="400"></canvas>
+    <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="moment.min.js"></script>
+    <script type="text/javascript" src="Chart.min.js"></script>
+    <script>
+        
+    var labels = [];
+    var tempData = [];
+
+    $.get('/temperature', function(data) {
+        var lines = data.split('\n');
+        lines.forEach(function(line) {
+            if (line.length) {
+                labels.push(line.split(' ')[0]);
+                tempData.push(line.split(' ')[1]);
+            }
+        });
+
+        var ctx = document.getElementById("tempChart").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+            labels: labels,
+                datasets: [{ 
+                    data: tempData,
+                    label: 'Room temperature',
+                    borderColor: '#3e95cd',
+                    fill: false
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Living room temperature per minute (in °C)'
+                },
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        distribution: 'linear'
+                    }]
+                }
+            }
+        });
+    });
+    </script>    
+</body>
 </html>

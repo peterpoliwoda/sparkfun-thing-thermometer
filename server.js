@@ -7,7 +7,12 @@ const http = require('http'),
     app = express(),
     PORT = process.env.PORT || 5000,
     appDir = pathUtils.resolve(__dirname, 'client');
-let tempFilePath = 'tempFile.txt';
+let tempFilePath = getTodaysFileName();
+
+function getTodaysFileName() {
+    let fileName = 'temperature/' + new Date().toISOString().split('T')[0] + '.txt';
+    return fileName;
+}
 
 app.use(express.static(appDir));
 
@@ -32,19 +37,22 @@ app.get('/temperature/view', function(req, res) {
         if (err) {
             res.status(500).json({error: 'Error opening temperature file.'});
             console.error('ERR: Error opening temperature file!');
+        } else {
+            data = data.replace(/\n/g, '<br>');
+            res.status(200).send(data);
         }
-        data = data.replace(/\n/g, '<br>');
-        res.status(200).send(data);
     });
 });
 
 app.get('/temperature', function(req, res) {
     fs.readFile(tempFilePath, 'utf8', (err, data) => {
         if (err) {
-            res.status(500).json({error: 'Error opening temperature file.'});
+            res.status(500).json({error: 'Error opening temperature file. Recreating. Please refresh page.'});
             console.error('ERR: Error opening temperature file!');
+            fs.closeSync(fs.openSync(tempFilePath, 'w'));
+        } else {
+            res.status(200).send(data.toString());
         }
-        res.status(200).send(data.toString());
     });
 });
 
