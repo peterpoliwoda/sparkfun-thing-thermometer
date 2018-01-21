@@ -1,0 +1,24 @@
+{
+  "name": "sparkfun-thing-thermometer",
+  "version": "0.0.1",
+  "description": "Sparkfun Thermometer raspberry pi server",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piotrekkmt/sparkfun-thing-thermometer.git"
+  },
+  "author": "Peter Poliwoda <piotrekkmt@gmail.com> (http://www.nautiluslabs.eu)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/piotrekkmt/sparkfun-thing-thermometer/issues"
+  },
+  "homepage": "https://github.com/piotrekkmt/sparkfun-thing-thermometer#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "fs": "0.0.1-security"
+  }
+}
