@@ -18,7 +18,8 @@ function getTodaysFileName() {
 }
 
 function getTempOutside() {
-    if (!stashedTempOutside || new Date().getMinutes() === 59) {
+    if (!stashedTempOutside || new Date().getMinutes() === 59
+        || new Date().getMinutes() === 30) {
         return getTempFromAPI();
     } else {
         return stashedTempOutside;
@@ -40,6 +41,7 @@ function getTempFromAPI() {
 app.use(express.static(appDir));
 
 app.post('/temperature/:temp', function(req, res) {
+    tempFilePath = getTodaysFileName();
     let outside = getTempOutside();
     let temperatura = req.params.temp;
     if (temperatura && !isNaN(temperatura)) {
@@ -57,6 +59,7 @@ app.post('/temperature/:temp', function(req, res) {
 });
 
 app.get('/temperature/view', function(req, res) {
+    tempFilePath = getTodaysFileName();
     fs.readFile(tempFilePath, 'utf8', (err, data) => {
         if (err) {
             res.status(500).json({error: 'Error opening temperature file.'});
@@ -69,6 +72,7 @@ app.get('/temperature/view', function(req, res) {
 });
 
 app.get('/temperature', function(req, res) {
+    tempFilePath = getTodaysFileName();
     fs.readFile(tempFilePath, 'utf8', (err, data) => {
         if (err) {
             res.status(500).json({error: 'Error opening temperature file. Recreating. Please refresh page.'});
