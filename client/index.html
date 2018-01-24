@@ -16,7 +16,7 @@
     $.get('/temperature', function(data) {
         var lines = data.split('\n');
         lines.forEach(function(line) {
-            if (line.length && !~line.indexOf('-127')) {
+            if (line.length && !~line.indexOf('-127.00') && !~line.indexOf('85.00')) {
                 labels.push(line.split(' ')[0]);
                 tempData.push(line.split(' ')[1]);
                 outsideData.push(line.split(' ')[2] || 0);
