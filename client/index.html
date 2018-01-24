@@ -1,27 +1,80 @@
 <html>
     <head>
         <title>Peter's room temperature</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <style>
+            body {
+                font-family: 'Roboto', sans-serif;
+            }
+
+            .title {
+                font-size: 22px;
+                color: #666;
+            }
+
+            .subtitle {
+                color: #999;
+            }
+        </style>
     </head>
     <body>
+    <form>
+        <p align="right">
+            <select id="datePicker"></select>
+        </p>
+        <p>
+            <span><strong class="title" id="temp"></strong>
+                 °C</span> <em class="subtitle">measured <span id="tempTime"></span></em>.
+        </p>
+    </form>
     <canvas id="tempChart" width="800" height="400"></canvas>
     <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="moment.min.js"></script>
     <script type="text/javascript" src="Chart.min.js"></script>
     <script>
-        
+    
+    function getToday() {
+        return new Date().toISOString().split('T')[0];
+    }
+
+    function getDayFilesList() {
+        $.get('/days', function(data) {
+            if (data && Array.isArray(data)) {
+                for (key in data) {
+                    $('#datePicker').append('<option>' + data[key] + '</option>');
+                }
+                var selectedDay = getToday() + '.txt';
+                $('#datePicker').val(selectedDay).change();
+            }
+        });
+    }
+
+    //TODO: Make changing the file list load that day's records
+    // A.K.A make this do something
+    getDayFilesList();
+
+
     var labels = [];
     var tempData = [];
     var outsideData = [];
 
     $.get('/temperature', function(data) {
         var lines = data.split('\n');
+        var tempTime;
+        var temp;
         lines.forEach(function(line) {
             if (line.length && !~line.indexOf('-127.00') && !~line.indexOf('85.00')) {
-                labels.push(line.split(' ')[0]);
-                tempData.push(line.split(' ')[1]);
+                tempTime = line.split(' ')[0];
+                temp = line.split(' ')[1];
+
+                labels.push(tempTime);
+                tempData.push(temp);
                 outsideData.push(line.split(' ')[2] || 0);
             }
         });
+
+        $('#temp').text(temp);
+        $('#tempTime').text(moment(tempTime).fromNow());
 
         var ctx = document.getElementById('tempChart').getContext('2d');
         var myChart = new Chart(ctx, {

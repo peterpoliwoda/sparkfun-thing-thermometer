@@ -82,6 +82,17 @@ app.get('/temperature/view', function(req, res) {
     });
 });
 
+app.get('/temperature/:day', function(req, res) {
+    fs.readFile('temperature/' + req.params.day, 'utf8', (err, data) => {
+        if (err) {
+            res.status(500).json({error: 'Error opening temperature file. Files does not exist.'});
+            console.error('ERR: Error opening temperature file!');
+        } else {
+            res.status(200).send(data.toString());
+        }
+    });
+});
+
 app.get('/temperature', function(req, res) {
     tempFilePath = getTodaysFileName();
     fs.readFile(tempFilePath, 'utf8', (err, data) => {
@@ -95,6 +106,16 @@ app.get('/temperature', function(req, res) {
     });
 });
 
+app.get('/days', function(req, res) {
+    fs.readdir('temperature/', (err, files) => {
+        if (err) {
+            res.status(500).json({error: 'Error opening temperature folder.'});
+            console.error('ERR: Error opening temperature folder!');
+        } else {
+            res.status(200).send(files);
+        }
+    });
+});
 
 app.get('/', function(req, res) {
     res.sendfile(pathUtils.resolve(appDir, 'index.html'));
