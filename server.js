@@ -20,21 +20,32 @@ function getTodaysFileName() {
 function getTempOutside() {
     if (!stashedTempOutside || new Date().getMinutes() === 59
         || new Date().getMinutes() === 30) {
-        return getTempFromAPI();
+        getTempFromAPI().then((temp) => {
+            return temp;
+        }).catch((err) => {
+            console.error('ERROR on getTempOutside:', err);
+            return null;
+        });
     } else {
         return stashedTempOutside;
     }
 }
 
 function getTempFromAPI() {
-    const weatherPath = 'https://api.darksky.net/forecast/' +
+    return new Promise((resolve, reject) => {
+        const weatherPath = 'https://api.darksky.net/forecast/' +
         config.WEATHER_API_TOKEN + '/' + config.WEATHER_LAT_LONG + '?units=si&exclude=flags,hourly,minutely,daily';
-    request(weatherPath, {json: true}, (error, response, body) => {
-        let currentTemp = body && body.currently && body.currently.temperature ?
-            body.currently.temperature : null;
-        console.log('currentTemp from API is:', currentTemp);
-        stashedTempOutside = currentTemp;
-        return currentTemp;
+        request(weatherPath, {json: true}, (error, response, body) => {
+            if (error) {
+                reject(error);
+            } else {
+                let currentTemp = body && body.currently && body.currently.temperature ?
+                body.currently.temperature : null;
+                console.log('currentTemp from API is:', currentTemp);
+                stashedTempOutside = currentTemp;
+                resolve(currentTemp);
+            }
+        });
     });
 }
 

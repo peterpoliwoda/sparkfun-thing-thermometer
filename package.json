@@ -19,7 +19,6 @@
   "homepage": "https://github.com/piotrekkmt/sparkfun-thing-thermometer#readme",
   "dependencies": {
     "express": "^4.16.2",
-    "fs": "0.0.1-security",
     "request": "^2.83.0"
   }
 }
