@@ -103,6 +103,11 @@ void blinkTimes(int times) {
 }
 
 void postTemperatureToPi(float temperature) {
+  // Check if wifi connected before sending request
+  if (WiFi.status() != WL_CONNECTED) {
+    connectToWiFi(networkName, networkPswd);
+  }
+  
   Serial.println("Connecting to domain: " + String(hostDomain));
 
   // Use WiFiClient class to create TCP connections
