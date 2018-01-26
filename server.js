@@ -18,8 +18,8 @@ function getTodaysFileName() {
 }
 
 function getTempOutside() {
-    if (!stashedTempOutside || new Date().getMinutes() === 59
-        || new Date().getMinutes() === 30) {
+    const callMins = [15,30,45,59];
+    if (!stashedTempOutside || callMins.indexOf(new Date().getMinutes() > -1)) {
         getTempFromAPI().then((temp) => {
             return temp;
         }).catch((err) => {
