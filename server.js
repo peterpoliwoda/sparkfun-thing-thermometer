@@ -16,19 +16,22 @@ function refreshTodaysFileName() {
     tempFilePath = 'temperature/' + new Date().toISOString().split('T')[0] + '.txt';
 }
 
+function refreshTempOutside() {
+    getTempFromAPI().then((temp) => {
+        stashedTempOutside = temp;
+    }).catch((err) => {
+        console.error('ERROR on getTempOutside:', err);
+        stashedTempOutside = null;
+    });
+}
+
 function getTempOutside() {
     const callMins = ['7', '15', '22', '30', '37', '45', '52', '59'];
     let currentMin = new Date().getMinutes().toString();
     if (!stashedTempOutside || callMins.indexOf(currentMin) > -1) {
-        getTempFromAPI().then((temp) => {
-            return temp;
-        }).catch((err) => {
-            console.error('ERROR on getTempOutside:', err);
-            return null;
-        });
-    } else {
-        return stashedTempOutside;
+        refreshTempOutside();
     }
+    return stashedTempOutside;
 }
 
 function getTempFromAPI() {
