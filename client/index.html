@@ -1,31 +1,50 @@
 <html>
     <head>
         <title>Peter's room temperature</title>
-        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
         <style>
             body {
-                font-family: 'Roboto', sans-serif;
+                font-family: 'Lato', sans-serif;
             }
 
             .title {
-                font-size: 22px;
+                font-family: 'Lato', Arial, Helvetica, sans-serif;
+                font-weight: 300;
+                font-size: 36px;
                 color: #666;
+                padding-left: 10px;
             }
 
             .subtitle {
                 color: #999;
             }
+
+            .datepicker {
+                float: right;
+                width: 160px;
+                padding-top: 9px;
+            }
+
+            .datepicker select {
+                /* width: 110px; */
+                background: #fff;
+                font-size: 18px;
+                font-family: 'Lato', Arial, Helvetica, sans-serif;
+                font-weight: 400;
+                color: #666;
+                border: 1px solid #666;
+            }
         </style>
     </head>
     <body>
     <form>
-        <p align="right">
+        <div class="datepicker">
             <select id="datePicker"></select>
-        </p>
-        <p>
-            <span><strong class="title" id="temp"></strong> °C</span>
+        </div>
+        <div>
+            <span class="title"><span id="temp"></span> °C</span>
             <em class="subtitle">measured <span id="tempTime"></span></em>.
-        </p>
+        </div>
     </form>
     <canvas id="tempChart" width="800" height="400"></canvas>
     <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
