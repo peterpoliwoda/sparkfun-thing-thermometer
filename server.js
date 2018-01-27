@@ -9,16 +9,15 @@ const http = require('http'),
     app = express(),
     PORT = process.env.PORT || 5000,
     appDir = pathUtils.resolve(__dirname, 'client');
-let tempFilePath = getTodaysFileName();
+let tempFilePath = '';
 let stashedTempOutside = null;
 
-function getTodaysFileName() {
-    let fileName = 'temperature/' + new Date().toISOString().split('T')[0] + '.txt';
-    return fileName;
+function refreshTodaysFileName() {
+    tempFilePath = 'temperature/' + new Date().toISOString().split('T')[0] + '.txt';
 }
 
 function getTempOutside() {
-    const callMins = ['15', '30', '45', '59'];
+    const callMins = ['7', '15', '22', '30', '37', '45', '52', '59'];
     let currentMin = new Date().getMinutes().toString();
     if (!stashedTempOutside || callMins.indexOf(currentMin) > -1) {
         getTempFromAPI().then((temp) => {
@@ -53,7 +52,7 @@ function getTempFromAPI() {
 app.use(express.static(appDir));
 
 app.post('/temperature/:temp', function(req, res) {
-    tempFilePath = getTodaysFileName();
+    refreshTodaysFileName();
     let outside = getTempOutside();
     let temperatura = req.params.temp;
     if (temperatura && !isNaN(temperatura)) {
@@ -71,7 +70,7 @@ app.post('/temperature/:temp', function(req, res) {
 });
 
 app.get('/temperature/view', function(req, res) {
-    tempFilePath = getTodaysFileName();
+    refreshTodaysFileName();
     fs.readFile(tempFilePath, 'utf8', (err, data) => {
         if (err) {
             res.status(500).json({error: 'Error opening temperature file.'});
@@ -95,7 +94,7 @@ app.get('/temperature/:day', function(req, res) {
 });
 
 app.get('/temperature', function(req, res) {
-    tempFilePath = getTodaysFileName();
+    refreshTodaysFileName();
     fs.readFile(tempFilePath, 'utf8', (err, data) => {
         if (err) {
             res.status(500).json({error: 'Error opening temperature file. Recreating. Please refresh page.'});
@@ -125,5 +124,6 @@ app.get('/', function(req, res) {
 http.createServer(app).listen(PORT, function() {
     console.log('Thermometer server listening on port ' + PORT);
     console.log('http://localhost:' + PORT);
+    refreshTodaysFileName();
     getTempOutside();
 });
